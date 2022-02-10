@@ -1,0 +1,22 @@
+FROM        centos:7
+MAINTAINER  mifi "mifi@abc.com"
+RUN         yum install -y openssh openssh-server openssh-clients
+RUN         mkdir -p /var/run/sshd
+RUN         ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN         ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN         /bin/echo 'root:mifipass' |chpasswd
+RUN         useradd mifi
+RUN         /bin/echo 'mifi:mifi' |chpasswd
+RUN         /bin/sed -i 's/.*session.*required.*pam_loginuid.so.*/session optional pam_loginuid.so/g' /etc/pam.d/sshd
+RUN         /usr/bin/ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+RUN         /bin/echo -e "LANG=\"en_US.UTF-8\"" > /etc/default/local
+RUN         /bin/echo -e "export LC_CTYPE=en_US.UTF-8" > /etc/profile.d/locale.sh
+RUN         /bin/echo -e "export LC_ALL=en_US.UTF-8" >> /etc/profile.d/locale.sh
+RUN         /bin/echo -e "LANG=en_US.UTF-8" > /etc/locale.conf
+RUN         /bin/echo -e "LANG=en_US.UTF-8" > /etc/sysconfig/i18n
+RUN         /bin/echo -e "LANG=en_US.UTF-8" > /etc/environment
+RUN         /bin/echo -e "LC_ALL=en_US.UTF-8" >> /etc/environment
+
+EXPOSE      22
+CMD         /usr/sbin/sshd -D
