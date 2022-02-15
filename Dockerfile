@@ -12,7 +12,7 @@ RUN service ssh start
 
 RUN  echo 'test:test' | chpasswd
 
-RUN apt install tzdata -y
+RUN apt install tzdata locales -y
 ENV TZ="Asia/Shanghai"
 
 RUN locale-gen en_US.UTF-8
